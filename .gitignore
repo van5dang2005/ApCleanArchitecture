@@ -1,0 +1,74 @@
+# Build results
+
+bin/
+obj/
+
+# Visual Studio
+
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider
+
+.idea/
+
+# VS Code
+
+.vscode/
+
+# Logs
+
+*.log
+
+# NuGet
+
+*.nupkg
+packages/
+
+# ASP.NET Core
+
+appsettings.Development.json
+
+# User Secrets
+
+secrets.json
+
+# Publish
+
+publish/
+
+# Test Results
+
+TestResults/
+
+# Entity Framework
+
+*.mdf
+*.ldf
+
+# Windows
+
+Thumbs.db
+Desktop.ini
+
+# Mac
+
+.DS_Store
+
+# Coverage
+
+coverage/
+coverage.xml
+
+# Generated files
+
+*.cache
+*.tmp
+
+# ReSharper
+
+_ReSharper*/
+*.DotSettings.user

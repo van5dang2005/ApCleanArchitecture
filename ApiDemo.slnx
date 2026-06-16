@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <File Path=".gitignore" />
+    <Project Path="ApiDemo/ApiDemo.csproj" />
+    <Project Path="Application/Application.csproj" />
+    <Project Path="Domain/Domain.csproj" Id="76e02062-7663-4318-88b6-086970767071" />
+    <Project Path="Infrastructure/Infrastructure.csproj" />
+  </Folder>
+</Solution>
