@@ -1,35 +1,27 @@
-﻿using Application.DTOs;
-using Application.Interfaces;
-using Microsoft.AspNetCore.Authorization;
+﻿using Application.Commands.Auth;
+using Application.DTOs;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
-namespace ApiDemo.Controllers
+namespace ApiDemo.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController(IMediator mediator) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    [HttpPost("register")]
+    [ProducesResponseType(typeof(AuthResponseDto), 201)]
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        private readonly IAuthService _auth;
+        var result = await mediator.Send(new RegisterCommand(dto.Username, dto.Email, dto.Password));
+        return CreatedAtAction(nameof(Login), result);
+    }
 
-        public AuthController(IAuthService auth) => _auth = auth;
-
-        /// <summary>Đăng ký tài khoản mới</summary>
-        [HttpPost("register")]
-        [ProducesResponseType(typeof(AuthResponseDto), 201)]
-        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
-        {
-            var result = await _auth.RegisterAsync(dto);
-            return CreatedAtAction(nameof(Login), result);
-        }
-
-        /// <summary>Đăng nhập, lấy JWT token</summary>
-        [HttpPost("login")]
-        [ProducesResponseType(typeof(AuthResponseDto), 200)]
-        public async Task<IActionResult> Login([FromBody] LoginDto dto)
-        {
-            var result = await _auth.LoginAsync(dto);
-            return Ok(result);
-        }
+    [HttpPost("login")]
+    [ProducesResponseType(typeof(AuthResponseDto), 200)]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    {
+        var result = await mediator.Send(new LoginCommand(dto.Email, dto.Password));
+        return Ok(result);
     }
 }

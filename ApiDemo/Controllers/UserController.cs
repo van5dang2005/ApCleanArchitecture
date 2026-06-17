@@ -1,61 +1,52 @@
-﻿using Application.DTOs;
-using Application.Interfaces;
+﻿using Application.Commands.Users;
+using Application.DTOs;
+using Application.Queries.Uses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using MediatR;
+namespace ApiDemo.Controllers;
 
-namespace ApiDemo.Controllers
+[ApiController]
+[Route("api/user")]
+[Authorize]
+public class UserController(IMediator mediator) : ControllerBase
 {
-    [ApiController]
-    [Route("api/user")]
-    [Authorize]
-    public class UserController : ControllerBase
+    [HttpGet("me")]
+    public async Task<IActionResult> GetMe()
     {
-        private readonly IUserService _users;
+        var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var user = await mediator.Send(new GetUserByIdQuery(id));
+        return user is null ? NotFound() : Ok(user);
+    }
 
-        public UserController(IUserService users) => _users = users;
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> GetAll()
+    {
+        var users = await mediator.Send(new GetAllUsersQuery());
+        return Ok(users);
+    }
 
-        /// <summary>Lấy thông tin user hiện tại (từ token)</summary>
-        [HttpGet("me")]
-        public async Task<IActionResult> GetMe()
-        {
-            var id = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-            var user = await _users.GetByIdAsync(id);
-            return user is null ? NotFound() : Ok(user);
-        }
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id)
+    {
+        var user = await mediator.Send(new GetUserByIdQuery(id));
+        return user is null ? NotFound() : Ok(user);
+    }
 
-        /// <summary>Lấy danh sách tất cả users (Admin only)</summary>
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll()
-        {
-            var users = await _users.GetAllAsync();
-            return Ok(users);
-        }
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserDto dto)
+    {
+        var updated = await mediator.Send(new UpdateUserCommand(id, dto.Username, dto.Email));
+        return Ok(updated);
+    }
 
-        /// <summary>Lấy user theo ID</summary>
-        [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetById(Guid id)
-        {
-            var user = await _users.GetByIdAsync(id);
-            return user is null ? NotFound() : Ok(user);
-        }
-
-        /// <summary>Cập nhật thông tin user</summary>
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserDto dto)
-        {
-            var updated = await _users.UpdateAsync(id, dto);
-            return Ok(updated);
-        }
-
-        /// <summary>Xóa user (Admin only)</summary>
-        [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            await _users.DeleteAsync(id);
-            return NoContent();
-        }
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        await mediator.Send(new DeleteUserCommand(id));
+        return NoContent();
     }
 }
