@@ -1,0 +1,13 @@
+services:
+  apidemo:
+    image: ${DOCKER_REGISTRY-}apidemo
+    build:
+      context: .
+      dockerfile: ApiDemo/Dockerfile
+    ports:
+      - "5213:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=
+      
