@@ -26,6 +26,11 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "swagger"
     }
   },
   "$schema": "https://json.schemastore.org/launchsettings.json",
