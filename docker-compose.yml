@@ -9,7 +9,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__Default=Server=db;Initial Catalog=ApiDemo;User Id=sa;Password=123456;Encrypt=True;Trust Server Certificate=True;Connection Timeout=30;
+      - ConnectionStrings__Default=Server=db;Initial Catalog=ApiDemo;User Id=sa;Password=Admin123456@;Encrypt=True;Trust Server Certificate=True;Connection Timeout=30;
       - Jwt__Secret=your-super-secret-key-min-32-characters!!
       - Jwt__Issuer=MyApp
       - Jwt__Audience=MyApp
@@ -25,14 +25,14 @@ services:
       - "1433:1433"
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=123456
+      - SA_PASSWORD=Admin123456@
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 123456 -Q 'SELECT 1' -No"]
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Admin123456@ -Q 'SELECT 1' -No"]
       interval: 10s
       timeout: 5s
       retries: 10
     volumes:
-      - sqldata:/var/lib/mssqlserver/data
+      - sqldata:/var/lib/mssql/data
     restart: unless-stopped
 
 volumes:
