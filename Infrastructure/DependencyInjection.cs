@@ -1,5 +1,7 @@
 ﻿using Application.Interfaces;
 using Domain.Interfaces;
+using Infrastructure.Messaging;
+using Infrastructure.Messaging.Consumers;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -24,6 +26,12 @@ namespace Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IJwtService, JwtService>();
+
+            // ---- RabbitMQ demo ----
+            var rabbitMqOptions = config.GetSection("RabbitMq").Get<RabbitMqOptions>() ?? new RabbitMqOptions();
+            services.AddSingleton(rabbitMqOptions);
+            services.AddSingleton<IMessagePublisher, RabbitMqPublisher>();
+            services.AddHostedService<UserRegisteredConsumer>();
 
             return services;
         }
